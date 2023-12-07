@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "862727179067",
+    "project_id": "muslim-blood-donor",
+    "storage_bucket": "muslim-blood-donor.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:862727179067:android:7bf55227d044ebd070051e",
+        "android_client_info": {
+          "package_name": "com.example.muslim_blood_donor_bd"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxhWInn8CYouGZQCc7FffnCLsUR8iqBxU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
