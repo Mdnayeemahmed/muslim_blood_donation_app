@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../../model/splash_screen_model.dart';
 
 class SplashScreenProvider extends ChangeNotifier {
-  SplashScreenModel _model = SplashScreenModel();
+  final SplashScreenModel _model = SplashScreenModel();
 
   SplashScreenModel get model => _model;
 

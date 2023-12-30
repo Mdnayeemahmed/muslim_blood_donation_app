@@ -4,6 +4,7 @@ import 'package:muslim_blood_donor_bd/view/search_donor/available_blood_list.dar
 
 import '../../view_model/services/stream_service.dart';
 import '../../widgets/list_widget.dart';
+import '../dashboard.dart';
 
 class DonorListArea extends StatelessWidget {
   final String divison;
@@ -54,6 +55,14 @@ class DonorListArea extends StatelessWidget {
           },
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigation.offAll(context, Dashboard());
+        },
+        label: const Text('Home'),
+        icon: const Icon(Icons.home),
+      ),
+
     );
   }
 }

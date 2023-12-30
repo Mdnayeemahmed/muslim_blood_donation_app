@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:muslim_blood_donor_bd/constant/navigation.dart';
+import 'package:muslim_blood_donor_bd/view/authentication/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/user_model.dart';
@@ -17,13 +19,17 @@ class AuthProviders extends ChangeNotifier {
   String? errorMessage;
   String userCollection = Paths.database.collectionUser;
 
+  String? _userName; // New field to store user_name
+
+  String get userName => _userName ?? ''; // Getter for user_name
+
   bool _authenticated = false;
 
   bool get isLoading => _isLoading;
 
   bool get isAuthenticated => _authenticated;
 
-  UserModel _currentUser = UserModel();
+  final UserModel _currentUser = UserModel();
 
   UserModel get currentUser => _currentUser;
 
@@ -38,26 +44,35 @@ class AuthProviders extends ChangeNotifier {
     if (response.isSuccess) {
       userID = response.body?["user_id"];
       writeUid(userID!);
-      await _token();
-      //await getCurrentUser(userID!);
-      notifyListeners();
-      return true;
+
+      Map<String, dynamic>? userInfo = await getUserInfo(userID!);
+
+      if (userInfo != null) {
+        _userName = userInfo['userName'];
+        writeUserName(_userName!);
+
+        // Check if the user is an admin
+        bool isAdmin = userInfo['admin'] ?? false;
+
+        // Write admin status to SharedPreferences
+        writeAdminStatus(isAdmin);
+        await checkAndUpdateDeviceToken(userID!);
+        // await getCurrentUser(userID!);
+        notifyListeners();
+        return true;
+      } else {
+        notifyListeners();
+        return false;
+      }
     } else {
       notifyListeners();
       return false;
     }
   }
 
-  Future<bool> signUp(
-      String email,
-      password,
-      String name,
-      String phone,
-      String divison,
-      String district,
-      String area,
-      String blood,
-      {bool? admin}) async {
+  Future<bool> signUp(String email, password, String name, String phone,
+      String divison, String district, String area, String blood,String dateofbirth,String reference,String sociallink,String conditon,
+      {bool? admin, bool? approve_status}) async {
     _isLoading = true;
     notifyListeners();
 
@@ -71,7 +86,6 @@ class AuthProviders extends ChangeNotifier {
       await _token();
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? deviceToken = prefs.getString('deviceToken');
-      print(deviceToken);
       final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
       String formattedCreatedTime = formatter.format(DateTime.now());
       String formattedLastUpdateTime = formatter.format(DateTime.now());
@@ -88,7 +102,14 @@ class AuthProviders extends ChangeNotifier {
           userDistrict: district,
           userArea: area,
           userBloodType: blood,
-          admin: admin ?? false);
+          admin: admin ?? false,
+          dateofbirth: dateofbirth,
+          counter: '0',
+          condition: conditon,
+          socialMediaLink: sociallink,
+          reference: reference,
+          isAvailable: true,
+          approve_status: approve_status ?? false);
 
       final userCreated =
           await DatabaseService.create(userCollection, userID!, user.toJson());
@@ -100,17 +121,21 @@ class AuthProviders extends ChangeNotifier {
     return false;
   }
 
-  Future<void> logout() async {
+  Future<void> logout(BuildContext context) async {
     await AuthService.logout();
     userID = null;
     removeuser();
     await checkAuthenticationStatus();
+    clearUserName();
     notifyListeners();
+
+    Navigation.offAll(context, const Login());
   }
 
   Future<void> checkAuthenticationStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? uid = prefs.getString('uid');
+    _userName = prefs.getString('user_name');
 
     _authenticated = (uid != null);
 
@@ -119,12 +144,11 @@ class AuthProviders extends ChangeNotifier {
 
   Future<void> _token() async {
     String? deviceToken = await authService.getDeviceToken();
-    print('token');
-    print(deviceToken);
     devicetoken(deviceToken!);
   }
 
-  Future<bool> changePassword(String currentPassword, String newPassword) async {
+  Future<bool> changePassword(
+      String currentPassword, String newPassword) async {
     try {
       _isLoading = true;
       notifyListeners();
@@ -167,7 +191,6 @@ class AuthProviders extends ChangeNotifier {
     }
   }
 
-
   Future<UserModel> getCurrentUser(String userID) async {
     final response = await DatabaseService.read(
       userCollection,
@@ -179,5 +202,149 @@ class AuthProviders extends ChangeNotifier {
     } else {
       throw Exception("Error getting current user");
     }
+  }
+
+  Future<bool> adminSignUp(String email, password, String name, String phone,
+      String divison, String district, String area, String blood,String dateofbirth,String reference,String sociallink,String conditon,
+      {bool? admin, bool? approve_status}) async {
+    _isLoading = true;
+    notifyListeners();
+
+    final response = await AuthService.createAuth(email, password);
+
+    _isLoading = false;
+
+    if (response.isSuccess) {
+      userID = response.body?["user_id"] as String;
+      writeUid(userID!);
+      await _token();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? deviceToken = prefs.getString('deviceToken');
+      final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+      String formattedCreatedTime = formatter.format(DateTime.now());
+      String formattedLastUpdateTime = formatter.format(DateTime.now());
+
+      UserModel user = UserModel(
+          userId: userID,
+          userEmail: email,
+          userName: name,
+          userDeviceTokens: deviceToken,
+          createdTime: formattedCreatedTime,
+          lastUpdateTime: formattedLastUpdateTime,
+          userPhone: phone,
+          userDivison: divison,
+          userDistrict: district,
+          userArea: area,
+          userBloodType: blood,
+          dateofbirth: dateofbirth,
+          counter: '0',
+          condition: conditon,
+          socialMediaLink: sociallink,
+          reference: reference,
+          isAvailable: true,
+          admin: admin ?? true,
+          approve_status: approve_status ?? true);
+
+      final userCreated =
+          await DatabaseService.create(userCollection, userID!, user.toJson());
+      if (userCreated.isSuccess) {
+        return true;
+      } else {}
+    } else {}
+    notifyListeners();
+    return false;
+  }
+
+  Future<bool> userSignUpByAdmin(String email, password, String name,
+      String phone, String divison, String district, String area, String blood,String dateofbirth,String reference,String sociallink,String conditon,
+      {bool? admin, bool? approve_status}) async {
+    _isLoading = true;
+    notifyListeners();
+
+    final response = await AuthService.createAuth(email, password);
+
+    _isLoading = false;
+
+    if (response.isSuccess) {
+      userID = response.body?["user_id"] as String;
+      writeUid(userID!);
+      await _token();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? deviceToken = prefs.getString('deviceToken');
+      final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+      String formattedCreatedTime = formatter.format(DateTime.now());
+      String formattedLastUpdateTime = formatter.format(DateTime.now());
+
+      UserModel user = UserModel(
+          userId: userID,
+          userEmail: email,
+          userName: name,
+          userDeviceTokens: deviceToken,
+          createdTime: formattedCreatedTime,
+          lastUpdateTime: formattedLastUpdateTime,
+          userPhone: phone,
+          userDivison: divison,
+          userDistrict: district,
+          userArea: area,
+          userBloodType: blood,
+          dateofbirth: dateofbirth,
+          counter: '0',
+          condition: conditon,
+          socialMediaLink: sociallink,
+          reference: reference,
+          isAvailable: true,
+          admin: admin ?? false,
+          approve_status: approve_status ?? true);
+
+      final userCreated =
+          await DatabaseService.create(userCollection, userID!, user.toJson());
+      if (userCreated.isSuccess) {
+        return true;
+      } else {}
+    } else {}
+    notifyListeners();
+    return false;
+  }
+
+  Future<Map<String, dynamic>?> getUserInfo(String userID) async {
+    try {
+      UserModel currentUser = await getCurrentUser(userID);
+      return {
+        'userID': currentUser.userId,
+        'userName': currentUser.userName,
+        'admin': currentUser.admin ?? false,
+      };
+    } catch (e) {
+      // Handle error, e.g., user not found
+      return null; // or return a default value or handle it accordingly
+    }
+  }
+
+  Future<void> writeAdminStatus(bool isAdmin) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isAdmin', isAdmin);
+  }
+
+  Future<void> checkAndUpdateDeviceToken(String userID) async {
+    String? currentDeviceToken = await authService.getDeviceToken();
+
+    UserModel currentUser = await getCurrentUser(userID);
+
+    if (currentUser.userDeviceTokens != currentDeviceToken) {
+      // Device token is different, update it in the user collection
+      currentUser.userDeviceTokens = currentDeviceToken;
+      await DatabaseService.update(
+          userCollection, userID, currentUser.toJson());
+    }
+  }
+
+  Future<void> writeUserName(String userName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_name', userName);
+  }
+
+  Future<void> clearUserName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user_name');
   }
 }

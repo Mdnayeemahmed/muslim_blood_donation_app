@@ -34,4 +34,14 @@ class TextStyles {
     fontWeight: FontWeight.w600,
     color: color,
   );
+  static TextStyle style15Bangla(Color color) => TextStyle(
+    fontSize: 15,
+    fontFamily: 'hind',
+    color: color,
+  );
+  static TextStyle style15(Color color) => TextStyle(
+    fontSize: 15,
+
+    color: color,
+  );
 }

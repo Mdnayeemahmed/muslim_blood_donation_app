@@ -1,14 +1,15 @@
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:muslim_blood_donor_bd/constant/navigation.dart';
+import 'package:muslim_blood_donor_bd/view/dashboard.dart';
 import 'package:provider/provider.dart';
 
 import '../../constant/assets_path.dart';
-import '../../constant/navigation.dart';
 import '../../view_model/provider/create_req_provider.dart';
+import '../../view_model/services/notification.dart';
 import '../../widgets/common_button_style.dart';
 import '../../widgets/common_text_field.dart';
-import '../dashboard.dart';
 
 class CreateReq extends StatefulWidget {
   const CreateReq({super.key});
@@ -18,6 +19,8 @@ class CreateReq extends StatefulWidget {
 }
 
 class _CreateReqState extends State<CreateReq> {
+  final LocalNotificationService _localNotificationService=LocalNotificationService();
+
   final List<String> _bloodTypes = [
     "A+",
     "B+",
@@ -39,7 +42,8 @@ class _CreateReqState extends State<CreateReq> {
       _contactNameController,
       _phoneController,
       _dateTimeController,
-      _amountController;
+      _amountController,
+      _hospitalController;
 
   final GlobalKey<FormState> _reqKey = GlobalKey<FormState>();
   String? selectedBloodType;
@@ -54,6 +58,7 @@ class _CreateReqState extends State<CreateReq> {
     _phoneController = TextEditingController();
     _dateTimeController = TextEditingController();
     _amountController = TextEditingController();
+    _hospitalController=TextEditingController();
     _createReqProvider = Provider.of<CreateReqProvider>(context, listen: false);
   }
 
@@ -108,9 +113,17 @@ class _CreateReqState extends State<CreateReq> {
             height: 16,
           ),
           CommonTextField(
+            controller: _hospitalController,
+            validator: _hospitalValidation,
+            hinttext: 'Hospital Name',
+            textInputType: TextInputType.text,
+          ), const SizedBox(
+            height: 16,
+          ),
+          CommonTextField(
             controller: _locationController,
             validator: _locationValidation,
-            hinttext: 'Location & Hospital Name',
+            hinttext: 'Hospital Location',
             textInputType: TextInputType.text,
           ),
           const SizedBox(
@@ -166,7 +179,7 @@ class _CreateReqState extends State<CreateReq> {
           ),
           DateTimeField(
             format: DateFormat("yyyy-MM-dd hh:mm a"),
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: "Select Date and Time",
             ),
             controller: _dateTimeController,
@@ -229,9 +242,13 @@ class _CreateReqState extends State<CreateReq> {
             builder: (context, reqProvider, child) {
               return reqProvider.isLoading
                   ? const SizedBox(
-                      width: double.infinity,
-                      child:
-                          CircularProgressIndicator()) // Show the loading indicator if isLoading is true
+                  width: double.infinity,
+                  child:
+                      AspectRatio(
+                    aspectRatio: 1.0,
+                    // Set the aspect ratio to 1.0 for a perfect circle
+                    child: CircularProgressIndicator(),
+                  ))  // Show the loading indicator if isLoading is true
                   : CommonButtonStyle(
                       title: 'Create Request',
                       onTap: () {
@@ -252,14 +269,21 @@ class _CreateReqState extends State<CreateReq> {
     return null;
   }
 
-  _phoneValidation(String? value) {
+  String? _phoneValidation(String? value) {
     if (value?.isEmpty ?? true) {
-      return 'Phone Number';
+      return 'Phone Number is required';
+    }
+
+    // Remove any non-digit characters from the phone number
+    String phoneNumber = value!.replaceAll(RegExp(r'\D'), '');
+
+    // Check if the sanitized phone number has exactly 11 digits
+    if (phoneNumber.length != 11) {
+      return 'Phone Number must be 11 digits';
     }
 
     return null;
   }
-
   _patientNameValidation(String? value) {
     if (value?.isEmpty ?? true) {
       return 'Enter Patient Name';
@@ -287,11 +311,18 @@ class _CreateReqState extends State<CreateReq> {
     }
     return null;
   }
+  _hospitalValidation(String? value) {
+    if (value?.isEmpty ?? true) {
+      return 'Enter Hospital Name';
+    }
+    return null;
+  }
 
   Future<void> _createReq() async {
     final patientName = _patientNameController.text;
     final caseType = _caseController.text;
     final location = _locationController.text;
+    final hospital=_hospitalController.text;
     final contactName = _contactNameController.text;
     final contactPhone = _phoneController.text;
     final blood = selectedBloodType;
@@ -302,7 +333,7 @@ class _CreateReqState extends State<CreateReq> {
 
     if (_reqKey.currentState?.validate() ?? false) {
       bool success = await _createReqProvider.reqBlood(reqTime!, patientName,
-          blood!, amount, location, contactName, contactPhone, caseType);
+          blood!, amount, location, contactName, contactPhone, caseType,hospital);
 
       _handleResult(success);
     }
@@ -314,14 +345,10 @@ class _CreateReqState extends State<CreateReq> {
     FocusScope.of(context).unfocus();
   }
 
-  void _handleResult(bool success) {
+  Future<void> _handleResult(bool success) async {
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Request successful."),
-        ),
-      );
-      Navigation.offAll(context, const Dashboard());
+      await LocalNotificationService.sendPushMessagesToAllUsers('Emergency Blood Alert','Blood Need Urgently!');
+      Navigation.offAll(context, Dashboard());
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

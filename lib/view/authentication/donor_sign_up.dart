@@ -1,21 +1,20 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:muslim_blood_donor_bd/view/dashboard.dart';
 import 'package:muslim_blood_donor_bd/view/authentication/login.dart';
 import 'package:provider/provider.dart';
-
 import '../../constant/app_color.dart';
 import '../../constant/assets_path.dart';
+import '../../constant/datautils.dart';
 import '../../constant/navigation.dart';
 import '../../constant/text_style.dart';
 import '../../model/data_item.dart';
 import '../../view_model/provider/auth_providers.dart';
 import '../../view_model/provider/data_provider.dart';
+import '../../view_model/provider/profile_update_provider.dart';
 import '../../view_model/provider/registration_screen_provider.dart';
 import '../../widgets/common_button_style.dart';
 import '../../widgets/common_password_field.dart';
 import '../../widgets/common_text_field.dart';
-
 
 class DonorSignUp extends StatefulWidget {
   const DonorSignUp({super.key});
@@ -39,10 +38,15 @@ class _DonorSignUpState extends State<DonorSignUp> {
   late TextEditingController _emailController,
       _passController,
       _nameController,
+      _dateofbirth,
+      _referenceET,
+      _socialMediaLinkET,
+      _conditionET,
       _phoneController;
   late AuthProviders _authProvider;
   late DataProvider _dataProvider;
   late SelectionModel _selectionModel;
+  late ProfileUpdateProvider _profile;
 
   final GlobalKey<FormState> _signupKey = GlobalKey<FormState>();
 
@@ -52,10 +56,16 @@ class _DonorSignUpState extends State<DonorSignUp> {
     _selectionModel = Provider.of<SelectionModel>(context, listen: false);
     _authProvider = Provider.of<AuthProviders>(context, listen: false);
     _dataProvider = Provider.of<DataProvider>(context, listen: false);
+    _profile = Provider.of<ProfileUpdateProvider>(context, listen: false);
+    _referenceET = TextEditingController();
+    _socialMediaLinkET = TextEditingController();
+    _conditionET = TextEditingController();
+
     _emailController = TextEditingController();
     _passController = TextEditingController();
     _nameController = TextEditingController();
     _phoneController = TextEditingController();
+    _dateofbirth = TextEditingController();
     _dataProvider.loadDivisionJsonData();
     _dataProvider.loadDistrictJsonData();
     _dataProvider.loadUpazilasJsonData();
@@ -70,6 +80,11 @@ class _DonorSignUpState extends State<DonorSignUp> {
     _passController.dispose();
     _nameController.dispose();
     _phoneController.dispose();
+    _dateofbirth.dispose();
+    _socialMediaLinkET.dispose();
+    _profile.dispose();
+    _referenceET.dispose();
+    _conditionET.dispose();
     _authProvider.dispose();
     _dataProvider.dispose();
     Provider.of<SelectionModel>(context, listen: false).dispose();
@@ -78,7 +93,10 @@ class _DonorSignUpState extends State<DonorSignUp> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width * 0.3;
+    double screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width * 0.3;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Become A Donor'),
@@ -129,10 +147,26 @@ class _DonorSignUpState extends State<DonorSignUp> {
     final district = _selectionModel.selectedDistrict?.name.toString();
     final area = _selectionModel.selectedArea?.name.toString();
     final blood = _selectionModel.selectedBloodGroup.toString();
+    final dateofbirth = _dateofbirth.text;
+    final reference = _referenceET.text;
+    final sociallink = _socialMediaLinkET.text;
+    final conditon = _conditionET.text;
+
 
     if (_signupKey.currentState?.validate() ?? false) {
       bool success = await _authProvider.signUp(
-          email, password, name, phone, divison!, district!, area!, blood);
+          email,
+          password,
+          name,
+          phone,
+          divison!,
+          district!,
+          area!,
+          blood,
+          dateofbirth,
+          reference,
+          sociallink,
+          conditon);
       _handleSignupResult(success);
     }
 
@@ -145,7 +179,7 @@ class _DonorSignUpState extends State<DonorSignUp> {
 
   void _handleSignupResult(bool success) {
     if (success) {
-      Navigation.to(context, const Dashboard());
+      Navigation.to(context, const Login());
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -223,8 +257,8 @@ class _DonorSignUpState extends State<DonorSignUp> {
                     value: selectionModel.selectedDistrict,
                     items: dataProvider.districts
                         .where((district) =>
-                            district.division_id ==
-                            selectionModel.selectedDivision!.id)
+                    district.division_id ==
+                        selectionModel.selectedDivision!.id)
                         .map((DataItem item) {
                       return DropdownMenuItem<DataItem>(
                         value: item,
@@ -243,12 +277,11 @@ class _DonorSignUpState extends State<DonorSignUp> {
                   ),
                   const SizedBox(
                     height: 16,
-                  )
+                  ),
                 ],
               );
             },
           ),
-
           // Dropdown for Upazila
           Consumer<SelectionModel>(
             builder: (context, selectionModel, child) {
@@ -267,8 +300,8 @@ class _DonorSignUpState extends State<DonorSignUp> {
                     value: selectionModel.selectedArea,
                     items: dataProvider.area
                         .where((area) =>
-                            area.district_id ==
-                            selectionModel.selectedDistrict!.id)
+                    area.district_id ==
+                        selectionModel.selectedDistrict!.id)
                         .map((DataItem item) {
                       return DropdownMenuItem<DataItem>(
                         value: item,
@@ -292,9 +325,20 @@ class _DonorSignUpState extends State<DonorSignUp> {
               );
             },
           ),
-          // SizedBox(
-          //   height: 16,
-          // ),
+          TextFormField(
+            decoration: const InputDecoration(
+              labelText: 'Date Of Birth',
+            ),
+            controller: _dateofbirth,
+            readOnly: true,
+            onTap: () =>
+                DateUtilsfunction.pickDate(
+                    context, true, _dateofbirth, _profile.updateBirthDate),
+            validator: _dateValidation, // Use your validation function here
+          ),
+          const SizedBox(
+            height: 16,
+          ),
           CommonTextField(
             controller: _phoneController,
             validator: _phoneValidation,
@@ -331,9 +375,30 @@ class _DonorSignUpState extends State<DonorSignUp> {
               );
             },
           ),
-          const SizedBox(
-            height: 16,
+          const SizedBox(height: 16),
+          TextFormField(
+            decoration: const InputDecoration(
+              labelText: 'Reference For Other Organization Member',
+            ),
+            controller: _referenceET,
           ),
+          const SizedBox(height: 16),
+          TextFormField(
+            decoration: const InputDecoration(
+              labelText: 'Condition For Donation',
+            ),
+            controller: _conditionET,
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            decoration: const InputDecoration(
+              labelText: 'Social Media Link',
+            ),
+            controller: _socialMediaLinkET,
+          ),
+          const SizedBox(height: 16),
+
+
           CommonPassTextField(
             controller: _passController,
             validator: _passValidation,
@@ -346,15 +411,20 @@ class _DonorSignUpState extends State<DonorSignUp> {
           Consumer<AuthProviders>(
             builder: (context, authProvider, child) {
               return authProvider.isLoading
-                  ? const SizedBox(width: double.infinity,
-                      child:
-                          CircularProgressIndicator()) // Show the loading indicator if isLoading is true
+                  ? Container(
+                width: 50.0, // Adjust the width as needed
+                height: 50.0, // Adjust the height as needed
+                child: AspectRatio(
+                  aspectRatio: 1.0,
+                  child: CircularProgressIndicator(),
+                ),
+              )
                   : CommonButtonStyle(
-                      title: 'Register',
-                      onTap: () {
-                        _signup();
-                      },
-                    );
+                title: 'Register',
+                onTap: () {
+                  _signup();
+                },
+              );
             },
           )
         ],
@@ -369,9 +439,17 @@ class _DonorSignUpState extends State<DonorSignUp> {
     return null;
   }
 
-  _phoneValidation(String? value) {
+  String? _phoneValidation(String? value) {
     if (value?.isEmpty ?? true) {
-      return 'Phone Number';
+      return 'Phone Number is required';
+    }
+
+    // Remove any non-digit characters from the phone number
+    String phoneNumber = value!.replaceAll(RegExp(r'\D'), '');
+
+    // Check if the sanitized phone number has exactly 11 digits
+    if (phoneNumber.length != 11) {
+      return 'Phone Number must be 11 digits';
     }
 
     return null;
@@ -394,4 +472,12 @@ class _DonorSignUpState extends State<DonorSignUp> {
     }
     return null;
   }
+
+  String? _dateValidation(String? value) {
+    if (value?.isEmpty ?? true) {
+      return 'Date of Birth is required';
+    }
+    return null;
+  }
+
 }

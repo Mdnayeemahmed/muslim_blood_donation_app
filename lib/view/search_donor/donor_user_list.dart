@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:muslim_blood_donor_bd/view/dashboard.dart';
 
+import '../../constant/navigation.dart';
 import '../../view_model/services/stream_service.dart';
 import '../../widgets/user_list.dart';
 
@@ -30,7 +32,7 @@ class DonorUserList extends StatelessWidget {
             .getUsersForBloodType(bloodtype, area, districts, division),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
@@ -53,7 +55,6 @@ class DonorUserList extends StatelessWidget {
               final divison = division; // Use the 'area' parameter
               final phone = user['phone'];
 
-              // Ensure that 'name' and 'phone' are not null before creating the UserList widget
               if (name != null && phone != null) {
                 return UserList(
                   name: name,
@@ -69,12 +70,19 @@ class DonorUserList extends StatelessWidget {
                   },
                 );
               } else {
-                return SizedBox
+                return const SizedBox
                     .shrink(); // Return an empty widget if 'name' or 'phone' is null
               }
             },
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigation.offAll(context, const Dashboard());
+        },
+        label: const Text('Home'),
+        icon: const Icon(Icons.home),
       ),
     );
   }

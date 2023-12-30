@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:muslim_blood_donor_bd/constant/app_color.dart';
 import 'package:muslim_blood_donor_bd/constant/assets_path.dart';
+import 'package:muslim_blood_donor_bd/constant/hard_text.dart';
 import 'package:muslim_blood_donor_bd/constant/navigation.dart';
 import 'package:muslim_blood_donor_bd/constant/text_style.dart';
+import 'package:muslim_blood_donor_bd/view/authentication/reset_pass.dart';
 import 'package:muslim_blood_donor_bd/view/dashboard.dart';
 import 'package:muslim_blood_donor_bd/widgets/common_button_style.dart';
 import 'package:muslim_blood_donor_bd/widgets/common_text_field.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../view_model/provider/auth_providers.dart';
 import '../../widgets/common_password_field.dart';
 import 'donor_sign_up.dart';
@@ -112,19 +115,49 @@ class _LoginState extends State<Login> {
                       height: 2,
                     ),
                     InkWell(
-                      onTap: () {
-                        //Navigation.offAll(context, MyDropdownPage());;
+                      onTap: () async {
+                        try {
+                          await launchUrl(
+                          Uri.parse(HardText.m),
+                          mode: LaunchMode.externalApplication,
+                          );
+                        } catch (e) {
+                          print('Error launching URL: $e');
+                        }
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Forgot Password",
-                            style: TextStyles.style16Bold(dark),
+                            "Facing Issue With Login?",
+                            style: TextStyles.style15(dark),
                           ),
                         ],
                       ),
                     ),
+                    const SizedBox(
+                      height: 3,
+                    ),
+
+
+                    InkWell(
+                      onTap: () {
+                        Navigation.to(context, ResetPass());
+                      },
+                      child: Row(
+
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Forgot Password",
+                            style: TextStyles.style15(dark),
+                          ),
+                        ],
+                      ),
+                    ),
+
+
+
                     Spacer(),
                     Align(
                       alignment: Alignment.bottomCenter,
@@ -150,6 +183,7 @@ class _LoginState extends State<Login> {
 
     if (_loginKey.currentState?.validate() ?? false) {
       bool success = await _authProvider.login(email, password);
+      print('object');
 
       if (success) {
         print('true');

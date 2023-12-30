@@ -4,6 +4,7 @@ import 'package:muslim_blood_donor_bd/view/search_donor/donor_list_area.dart';
 import '../../constant/navigation.dart';
 import '../../view_model/services/stream_service.dart';
 import '../../widgets/list_widget.dart';
+import '../dashboard.dart';
 
 class DonorListDistrict extends StatelessWidget {
   final String division;
@@ -22,7 +23,7 @@ class DonorListDistrict extends StatelessWidget {
           stream: FirebaseService().getDistrictsForDivision(division),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator(); // Loading indicator
+              return const CircularProgressIndicator(); // Loading indicator
             }
 
             if (snapshot.hasError) {
@@ -47,6 +48,14 @@ class DonorListDistrict extends StatelessWidget {
           },
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigation.offAll(context, const Dashboard());
+        },
+        label: const Text('Home'),
+        icon: const Icon(Icons.home),
+      ),
+
     );
   }
 }

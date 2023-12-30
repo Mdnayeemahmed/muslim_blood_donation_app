@@ -10,7 +10,6 @@ class AppTheme {
           iconTheme: IconThemeData(color: Colors.white),
           color: primaryColor,
           titleTextStyle: TextStyles.headlineStyle(Colors.white),
-
       ),
       colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
       fontFamily: 'Merriweather',

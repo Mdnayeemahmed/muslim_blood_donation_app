@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../constant/text_style.dart';
 
 class ReqBloodWidget extends StatelessWidget {
+  final bool isAdmin;
   const ReqBloodWidget({
     Key? key,
     required this.bloodtype,
@@ -18,7 +19,11 @@ class ReqBloodWidget extends StatelessWidget {
     required this.userName,
     required this.date,
     required this.userPhone,
-    this.onTap,
+    required this.onTap,
+    this.onTapPhone,
+    required this.phospital,
+    required this.isAdmin,
+
   });
 
   final String bloodtype,
@@ -29,12 +34,15 @@ class ReqBloodWidget extends StatelessWidget {
       pRContact,
       pRPhone,
       userName,
+  phospital,
       userPhone;
   final DateTime date;
-  final VoidCallback? onTap;
+  final VoidCallback? onTap,onTapPhone;
+
 
   @override
   Widget build(BuildContext context) {
+    print(isAdmin);
     return Container(
       margin: const EdgeInsets.all(8.0),
       padding: const EdgeInsets.all(8.0),
@@ -53,6 +61,9 @@ class ReqBloodWidget extends StatelessWidget {
           Text('Required: ' + preq + ' Bag',
               style: TextStyles.style14Bold(Colors.black)),
           Text('Case: ' + pcase, style: TextStyles.style14Bold(Colors.black)),
+          Text('Hospital Name: ' + phospital,
+              style: TextStyles.style14Bold(Colors.black)),
+
           Text('Location: ' + ploction,
               style: TextStyles.style14Bold(Colors.black)),
           Text('Contact: ' + pRContact,
@@ -83,7 +94,7 @@ class ReqBloodWidget extends StatelessWidget {
           Container(
             color: Colors.green,
             child: GestureDetector(
-              onTap: onTap,
+              onTap: onTapPhone,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -96,25 +107,35 @@ class ReqBloodWidget extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 10),
-          Container(
-            color: Colors.red,
-            child: GestureDetector(
-              onTap: onTap,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(Icons.delete, color: Colors.white, size: 20),
-                  SizedBox(width: 3),
-                  Text('Delete',
-                      style: TextStyle(fontSize: 16, color: Colors.white)),
-                ],
-              ),
+
+          if (isAdmin)
+            Column(
+              children: [
+                SizedBox(height: 10),
+                Container(
+                  color: Colors.red,
+                  child: GestureDetector(
+                    onTap:onTap,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(Icons.delete, color: Colors.white, size: 20),
+                        SizedBox(width: 3),
+                        Text('Delete',
+                            style: TextStyle(fontSize: 16, color: Colors.white)),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
         ],
       ),
     );
   }
+
+
 }
+
+

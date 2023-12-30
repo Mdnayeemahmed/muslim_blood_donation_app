@@ -8,7 +8,7 @@ import '../services/database_service.dart';
 
 class CreateReqProvider extends ChangeNotifier {
   final DatabaseService databaseService = DatabaseService();
-  var uuid = Uuid();
+  var uuid = const Uuid();
 
   bool _isLoading = false;
   String reqCollection = Paths.database.collectionReq;
@@ -50,6 +50,7 @@ class CreateReqProvider extends ChangeNotifier {
       String pRName,
       String pRNumber,
       String pCase,
+      String hospital
       ) async {
     final userInfo = await getUserInfo();
     String cName = userInfo['name'] ?? ''; // Default to an empty string if not found
@@ -74,6 +75,7 @@ class CreateReqProvider extends ChangeNotifier {
       reqDateTime: requestDateTime,
       patientRelativesContactName: pRName,
       patientRelativesContactNumber: pRNumber,
+      hospital: hospital,
     );
 
     final response = await DatabaseService.create(reqCollection, docID, req.toJson());

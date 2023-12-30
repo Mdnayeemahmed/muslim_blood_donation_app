@@ -13,8 +13,17 @@ class UserModel {
   String? userBloodType;
   bool? admin;
   String? lastDonateDate;
+  bool?
+      approve_status; // Rename approve_status to follow Dart naming conventions
+  String? reference;
+  String? condition;
+  String? socialMediaLink;
+  String? counter;
+  String? dateofbirth;
+  bool? isAvailable;
 
-  UserModel({this.userId,
+  UserModel({
+    this.userId,
     this.userEmail,
     this.userName,
     this.userPhone,
@@ -27,7 +36,14 @@ class UserModel {
     this.userDistrict,
     this.userDivison,
     this.admin,
-    this.lastDonateDate
+    this.lastDonateDate,
+    this.approve_status,
+    this.reference,
+    this.condition,
+    this.socialMediaLink,
+    this.counter,
+    this.dateofbirth,
+    this.isAvailable
   });
 
   UserModel.fromJson(Map<String, dynamic> json) {
@@ -45,6 +61,18 @@ class UserModel {
     userArea = json['user_area'];
     userBloodType = json['user_bloodtype'];
     lastDonateDate = json['last_donate_date'];
+    approve_status = json[
+        'approve_status']; // Rename approve_status to follow Dart naming conventions
+    reference = json['reference'];
+    condition = json['condition'];
+    socialMediaLink = json['socialMediaLink'];
+    counter = json['blood_count'];
+    dateofbirth = json['date_of_birth'];
+    isAvailable = json['isAvailable'];
+
+
+
+
   }
 
   Map<String, dynamic> toJson() {
@@ -63,6 +91,16 @@ class UserModel {
     data['user_area'] = userArea;
     data['user_bloodtype'] = userBloodType;
     data['last_donate_date'] = lastDonateDate;
+    data['approve_status'] =
+        approve_status; // Rename approve_status to follow Dart naming conventions
+    data['reference'] = reference;
+    data['condition'] = condition;
+    data['socialMediaLink'] = socialMediaLink;
+    data['blood_count']=counter;
+    data['date_of_birth']=dateofbirth;
+    data['isAvailable']=isAvailable;
+
+
 
 
     return data;

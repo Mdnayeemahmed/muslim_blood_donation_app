@@ -5,7 +5,9 @@ import 'package:muslim_blood_donor_bd/constant/hard_text.dart';
 import 'package:muslim_blood_donor_bd/constant/navigation.dart';
 import 'package:muslim_blood_donor_bd/constant/text_style.dart';
 import 'package:muslim_blood_donor_bd/view/authentication/login.dart';
+import 'package:muslim_blood_donor_bd/view/dashboard.dart'; // Import your dashboard widget
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../view_model/provider/splash_screen_provider.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -22,13 +24,26 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     _provider = Provider.of<SplashScreenProvider>(context, listen: false);
+    checkUserLoggedIn();
+  }
+
+  Future<void> checkUserLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? uid = prefs.getString('uid');
+
     Future.delayed(const Duration(seconds: 2), () {
       _provider.updateLogoOpacity(1.0);
       _provider.updateprogressOpacity(1.0);
       Future.delayed(const Duration(seconds: 1), () {
         _provider.updateTextOpacity(1.0);
         Future.delayed(const Duration(seconds: 2), () {
-          Navigation.offAll(context, const Login());
+          if (uid != null) {
+            print(uid);
+            Navigation.offAll(context, const Dashboard());
+          } else {
+            // User is not logged in, navigate to login page
+            Navigation.offAll(context, const Login());
+          }
         });
       });
     });

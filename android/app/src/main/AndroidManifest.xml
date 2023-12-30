@@ -1,9 +1,16 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:label="muslim_blood_donor_bd"
+        android:label="Muslim Blood Donor Bd"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:usesCleartextTraffic="true"
+
+        android:icon="@mipmap/launcher_icon"
+        tools:targetApi="m">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -31,6 +38,8 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+
 
     </application>
 </manifest>

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:muslim_blood_donor_bd/model/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,7 +10,15 @@ import '../services/database_service.dart';
 
 class ProfileUpdateProvider extends ChangeNotifier {
   final DatabaseService databaseService = DatabaseService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _updatingInfo = false;
+  bool _isAvailable = true;
+  String _downloadUrl = '';
+
+  String get downloadUrl => _downloadUrl;
+
+
+  bool get isAvailable => _isAvailable;
 
   late StreamController<UserModel> _userStreamController;
   Stream<UserModel> get userStream => _userStreamController.stream;
@@ -20,9 +29,13 @@ class ProfileUpdateProvider extends ChangeNotifier {
   UserModel get currentUser => _currentUser;
 
   late DateTime _lastDonateDate;
+  late DateTime _updateDate;
+
   String?uid;
 
   DateTime get lastDonateDate => _lastDonateDate;
+  DateTime get updateDate => _updateDate;
+
 
   String userCollection = Paths.database.collectionUser;
 
@@ -40,6 +53,12 @@ class ProfileUpdateProvider extends ChangeNotifier {
     required String uid,
     String? donateDate,
     String? socialMediaLink,
+    String? reference,
+    String? condition,
+    String? birthday,
+    String? phone,
+    String? counter,
+
   }) async {
     _updatingInfo = true;
     notifyListeners();
@@ -49,22 +68,56 @@ class ProfileUpdateProvider extends ChangeNotifier {
     if (donateDate != null) {
       updatedData['last_donate_date'] = donateDate;
     }
+    if (counter != null) {
+      updatedData['blood_count'] = counter;
+    }
 
     if (socialMediaLink != null) {
       updatedData['socialMediaLink'] = socialMediaLink;
     }
+    if (phone != null) {
+      updatedData['user_phone'] = phone;
+    }
 
-    final response =
-    await DatabaseService.update(userCollection, uid, updatedData);
+    if (reference != null) {
+      updatedData['reference'] = reference;
+    }
+
+    if (condition != null) {
+      updatedData['condition'] = condition;
+    }
+    if (birthday != null) {
+      updatedData['date_of_birth'] = birthday;
+    }
+
+    final response = await DatabaseService.update(userCollection, uid, updatedData);
     _updatingInfo = false;
     notifyListeners();
 
-    if (response.isSuccess) {
-      return true;
-    } else {
-      return false;
-    }
+    return response.isSuccess;
   }
+
+
+  Future<bool> updateCounter({
+    required String uid,
+    String? counter,
+  }) async {
+    _updatingInfo = true;
+    notifyListeners();
+
+    final Map<String, dynamic> updatedData = {};
+
+    if (counter != null) {
+      updatedData['blood_count'] = counter;
+    }
+
+    final response = await DatabaseService.update(userCollection, uid, updatedData);
+    _updatingInfo = false;
+    notifyListeners();
+
+    return response.isSuccess;
+  }
+
 
   Future<void> getCurrentUser() async {
     try {
@@ -106,4 +159,78 @@ class ProfileUpdateProvider extends ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     uid = prefs.getString('uid');
   }
+
+  Future<bool> deleteUser(String userId, String password) async {
+    try {
+      _updatingInfo = true;
+      notifyListeners();
+
+      // Re-authenticate the user
+      await reauthenticateUser(password);
+
+      // Proceed with deleting the user
+      final response = await DatabaseService.delete(userCollection, userId);
+
+      _updatingInfo = false;
+      notifyListeners();
+
+      return response.isSuccess;
+    } catch (error) {
+      print("Error deleting user: $error");
+      return false;
+    }
+  }
+
+  Future<void> reauthenticateUser(String password) async {
+    try {
+      // Get the current user
+      User? user = _auth.currentUser;
+
+      if (user != null) {
+        // Get the user's email
+        String? email = user.email;
+        print(email);
+
+        if (email != null) {
+          // Create a credential using the user's email and provided password
+          AuthCredential credential = EmailAuthProvider.credential(email: email, password: password);
+
+          // Re-authenticate the user with the credential
+          await user.reauthenticateWithCredential(credential);
+        } else {
+          // Handle the case where the user's email is not available
+          throw FirebaseAuthException(
+            code: 'missing-email',
+            message: 'User email is not available.',
+          );
+        }
+      }
+    } catch (error) {
+      print("Error during reauthentication: $error");
+      // Handle error as needed
+      rethrow;
+    }
+  }
+
+  void updateStatus(bool newStatus) {
+    _isAvailable = newStatus;
+    notifyListeners();
+  }
+
+  void updateProfilePhotoUrl(String newDownloadUrl) {
+    _downloadUrl = newDownloadUrl;
+    notifyListeners();
+  }
+
+  void updateBirthDate(DateTime date) {
+    _updateDate = date;
+    notifyListeners();
+  }
+
+  void clearDate() {
+    _updateDate = DateTime.now();
+    notifyListeners();
+  }
+
+
 }

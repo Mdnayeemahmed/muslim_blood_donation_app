@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../constant/navigation.dart';
 import '../../view_model/services/stream_service.dart';
 import '../../widgets/list_widget.dart';
+import '../dashboard.dart';
 import 'donor_user_list.dart';
 
 class AvailableBloodList extends StatelessWidget {
@@ -29,7 +30,7 @@ class AvailableBloodList extends StatelessWidget {
           stream: FirebaseService().getBloodForArea(area, districts, divison),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator(); // Loading indicator
+              return const CircularProgressIndicator(); // Loading indicator
             }
 
             if (snapshot.hasError) {
@@ -54,6 +55,14 @@ class AvailableBloodList extends StatelessWidget {
           },
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigation.offAll(context, const Dashboard());
+        },
+        label: const Text('Home'),
+        icon: const Icon(Icons.home),
+      ),
+
     );
   }
 }
