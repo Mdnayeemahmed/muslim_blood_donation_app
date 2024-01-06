@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:muslim_blood_donor_bd/constant/app_theme.dart';
 import 'package:muslim_blood_donor_bd/view_model/provider/auth_providers.dart';
 import 'package:muslim_blood_donor_bd/view_model/provider/create_req_provider.dart';
@@ -22,6 +23,10 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp, // Portrait mode only
+  ]);
 
   runApp(const MyApp());
 }

@@ -7,8 +7,7 @@ import '../constant/text_style.dart';
 
 class ReqBloodWidget extends StatelessWidget {
   final bool isAdmin;
-  const ReqBloodWidget({
-    Key? key,
+  const ReqBloodWidget({super.key,
     required this.bloodtype,
     required this.pname,
     required this.preq,
@@ -42,7 +41,6 @@ class ReqBloodWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(isAdmin);
     return Container(
       margin: const EdgeInsets.all(8.0),
       padding: const EdgeInsets.all(8.0),
@@ -53,15 +51,15 @@ class ReqBloodWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Blood Type: ' + bloodtype,
+          Text('Blood Type: $bloodtype',
               style: TextStyles.style16Bold(Colors.black)),
           const Divider(),
-          Text('Patient: ' + pname,
+          Text('Patient: $pname',
               style: TextStyles.style14Bold(Colors.black)),
-          Text('Required: ' + preq + ' Bag',
+          Text('Required: $preq Bag',
               style: TextStyles.style14Bold(Colors.black)),
-          Text('Case: ' + pcase, style: TextStyles.style14Bold(Colors.black)),
-          Text('Hospital Name: ' + phospital,
+          Text('Case: $pcase', style: TextStyles.style14Bold(Colors.black)),
+          Text('Hospital Name: $phospital',
               style: TextStyles.style14Bold(Colors.black)),
 
           Text('Location: ' + ploction,
