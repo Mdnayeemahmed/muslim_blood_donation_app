@@ -57,7 +57,7 @@ class AvailableBloodList extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigation.offAll(context, const Dashboard());
+          Navigation.off(context, const Dashboard());
         },
         label: const Text('Home'),
         icon: const Icon(Icons.home),

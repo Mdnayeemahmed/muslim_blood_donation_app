@@ -7,10 +7,13 @@ import 'package:muslim_blood_donor_bd/view/approve_donor/add_donor.dart';
 import 'package:muslim_blood_donor_bd/view/approve_donor/approve_donor.dart';
 import 'package:muslim_blood_donor_bd/view/donation/pay_now.dart';
 import 'package:muslim_blood_donor_bd/view/feed/news_feed.dart';
+import 'package:muslim_blood_donor_bd/view/privacy.dart';
 import 'package:muslim_blood_donor_bd/view/profile/current_profile_page.dart';
 import 'package:muslim_blood_donor_bd/view/req_blood/req_list.dart';
 import 'package:muslim_blood_donor_bd/view/search_donor/donor_list_divison.dart';
 import 'package:muslim_blood_donor_bd/view/update_user/updateUser.dart';
+import 'package:muslim_blood_donor_bd/view/why_donate.dart';
+import 'package:open_file/open_file.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -135,12 +138,8 @@ class _DashboardState extends State<Dashboard> {
               ListTile(
                 title: const Text('Why Donate'),
                 onTap: () {
-                  SnackbarUtils.showMessage(
-                      context,
-                      'Your donation is a noble act. In Islam, giving to those in need is highly encouraged. May your generosity be rewarded immensely.'
-                  );
-                  Navigator.pop(context); // Close the drawer
-                  // Add your navigation logic here
+                  Navigator.pop(context);
+                  Navigation.to(context, WhyDonate());
                 },
               ),
               ExpansionTile(title: Text('Communication'), children: [
@@ -167,7 +166,7 @@ class _DashboardState extends State<Dashboard> {
               ListTile(
                 title: Text('Privacy'),
                 onTap: () async {
-                  launchExternalUrl(HardText.m);
+                  Navigation.to(context, PrivacyScreen());
                 },
               ),
               ListTile(
@@ -176,7 +175,8 @@ class _DashboardState extends State<Dashboard> {
                   // Handle the tap on the first menu item
                   // For example, navigate to another screen
                   Navigator.pop(context); // Close the drawer
-                  shareApp();                },
+                  shareApp();
+                },
               ),
               ListTile(
                 title: Text('Settings'),
@@ -291,12 +291,12 @@ class _DashboardState extends State<Dashboard> {
                         ),
                       if (isAdmin)
                         CommonButton(
-                        ontap: () {
-                          Navigation.to(context, UserListScreen(uid: uid));
-                        },
-                        title: 'Update Donor',
-                        iconData: Icons.edit,
-                      ),
+                          ontap: () {
+                            Navigation.to(context, UserListScreen(uid: uid));
+                          },
+                          title: 'Update Donor',
+                          iconData: Icons.edit,
+                        ),
                     ]),
               )
             ],
@@ -315,10 +315,11 @@ class _DashboardState extends State<Dashboard> {
     } catch (e) {
       print('Error launching URL: $e');
     }
-}
-  void shareApp() {
-    final String text = 'Check out this amazing app! Download it now:\nhttps://drive.google.com/file/d/1_MmULw_S0oTzBcI1lu9txuJvN681-2pV/view?usp=drive_link';
-    Share.share(text, subject: 'Check out this app!');
   }
 
+  void shareApp() {
+    final String text =
+        'Check out this amazing app! Download it now:\nhttps://drive.google.com/file/d/1_MmULw_S0oTzBcI1lu9txuJvN681-2pV/view?usp=drive_link';
+    Share.share(text, subject: 'Check out this app!');
+  }
 }

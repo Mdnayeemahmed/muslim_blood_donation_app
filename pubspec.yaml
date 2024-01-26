@@ -61,12 +61,14 @@ dependencies:
   share: ^2.0.4
   flutter_launcher_icons: ^0.13.1
   http: ^1.1.2
+  open_file: ^3.0.1
+  syncfusion_flutter_pdfviewer: ^24.1.45
 
 
 flutter_launcher_icons:
     android: "launcher_icon"
     ios: true
-    image_path: "assets/logo/logo.png"
+    image_path: "assets/logo/app_logo.jpg"
     min_sdk_android: 21
 
 

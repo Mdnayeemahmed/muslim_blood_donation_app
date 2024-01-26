@@ -21,6 +21,12 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   late TextEditingController _lastDonateController;
   late TextEditingController _phoneController;
   late TextEditingController _passwordController;
+  late TextEditingController _nameController;
+  late TextEditingController _refController;
+  late TextEditingController _socialController;
+  late TextEditingController _conditionController;
+
+
 
   late UserModel _currentUser;
 
@@ -35,11 +41,16 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     _phoneController = TextEditingController(text: widget.user.userPhone ?? '');
     _currentUser = widget.user;
     _passwordController = TextEditingController();
+    _nameController=TextEditingController(text: widget.user.userName?? 'No name');
+    _refController=TextEditingController(text: widget.user.reference?? '');
+    _socialController=TextEditingController(text: widget.user.socialMediaLink?? '');
+    _conditionController=TextEditingController(text: widget.user.condition?? '');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('User Details'),
       ),
@@ -131,12 +142,14 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                     ).update(
                         uid: widget.user.userId!,
                         donateDate: _lastDonateController.text,
-                        socialMediaLink: widget.user.socialMediaLink,
-                        reference: widget.user.reference,
-                        condition: widget.user.condition,
+                        socialMediaLink: _socialController.text,
+                        reference: _refController.text,
+                        condition: _conditionController.text,
                         birthday: _dobController.text,
                         phone: _phoneController.text,
-                        counter: _counterController.text);
+                        counter: _counterController.text,
+                      name: _nameController.text
+                    );
 
                     if (success) {
                       SnackbarUtils.showMessage(context, 'Update Successfully');
@@ -180,33 +193,47 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   }
 
   Form _userDetailsForm(UserModel user) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    double textScaleFactor = screenWidth > 600 ? 1.5 : 1.0;
+
+    InputDecoration buildInputDecoration(String labelText, double textScaleFactor) {
+      return InputDecoration(
+        labelText: labelText,
+        contentPadding: EdgeInsets.symmetric(vertical: 8.0 * textScaleFactor,horizontal: 8.0 * textScaleFactor),
+        // Adjust fontSize dynamically
+        labelStyle: TextStyle(fontSize: 16.0 * textScaleFactor),
+      );
+    }
+
     return Form(
       child: ListView(
         padding: const EdgeInsets.all(0),
         children: [
           const SizedBox(height: 8),
           TextFormField(
+            controller: _nameController,
+            decoration: buildInputDecoration('Edit Name', textScaleFactor),
+            readOnly: false,
+            keyboardType: TextInputType.name,
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
             controller: _counterController,
-            decoration: const InputDecoration(
-              labelText: 'Blood Donated',
-            ),
+            decoration: buildInputDecoration('Blood Donated', textScaleFactor),
             readOnly: false,
             keyboardType: TextInputType.number,
           ),
           const SizedBox(height: 8),
           TextFormField(
             controller: _dobController,
-            decoration: const InputDecoration(
-              labelText: 'Date Of Birth',
-            ),
+            decoration: buildInputDecoration('Date Of Birth', textScaleFactor),
             readOnly: false,
           ),
           const SizedBox(height: 8),
           TextFormField(
             initialValue: user.userBloodType ?? '',
-            decoration: const InputDecoration(
-              labelText: 'Blood Group',
-            ),
+            decoration: buildInputDecoration('Blood Group', textScaleFactor),
             readOnly: true,
           ),
           const SizedBox(height: 8),
@@ -214,40 +241,30 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
             initialValue: user.userDivison != null
                 ? "${user.userDivison} Division, ${user.userDistrict} District, ${user.userArea} Area"
                 : '',
-            decoration: const InputDecoration(
-              labelText: 'Address',
-            ),
+            decoration: buildInputDecoration('Address', textScaleFactor),
             readOnly: true,
           ),
           const SizedBox(height: 8),
           TextFormField(
             controller: _phoneController,
-            decoration: const InputDecoration(
-              labelText: 'Mobile',
-            ),
+            decoration: buildInputDecoration('Mobile', textScaleFactor),
           ),
           const SizedBox(height: 8),
           TextFormField(
-            initialValue: user.reference ?? '',
-            decoration: const InputDecoration(
-              labelText: 'Reference',
-            ),
+            controller: _refController,
+            decoration: buildInputDecoration('Reference', textScaleFactor),
             readOnly: false,
           ),
           const SizedBox(height: 8),
           TextFormField(
-            initialValue: user.condition ?? '',
-            decoration: const InputDecoration(
-              labelText: 'Condition',
-            ),
+            controller: _conditionController,
+            decoration: buildInputDecoration('Condition For donation', textScaleFactor),
             readOnly: false,
           ),
           const SizedBox(height: 8),
           TextFormField(
-            initialValue: user.socialMediaLink ?? '',
-            decoration: const InputDecoration(
-              labelText: 'Social Media Link',
-            ),
+            controller: _socialController,
+            decoration: buildInputDecoration('Social Media Link', textScaleFactor),
             readOnly: false,
           ),
         ],
@@ -262,7 +279,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     _lastDonateController.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
-
+    _refController.dispose();
+    _nameController.dispose();
+    _socialController.dispose();
     super.dispose();
   }
 

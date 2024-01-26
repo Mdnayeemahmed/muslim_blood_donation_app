@@ -41,7 +41,6 @@ class _SplashScreenState extends State<SplashScreen> {
             print(uid);
             Navigation.offAll(context, const Dashboard());
           } else {
-            // User is not logged in, navigate to login page
             Navigation.offAll(context, const Login());
           }
         });

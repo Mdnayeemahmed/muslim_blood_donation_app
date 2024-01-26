@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:muslim_blood_donor_bd/constant/navigation.dart';
+import 'package:muslim_blood_donor_bd/model/signup_model.dart';
 import 'package:muslim_blood_donor_bd/view/authentication/login.dart';
+import 'package:muslim_blood_donor_bd/view/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/user_model.dart';
@@ -22,7 +24,6 @@ class AuthProviders extends ChangeNotifier {
   String? _userName; // New field to store user_name
 
   String get userName => _userName ?? ''; // Getter for user_name
-
   bool _authenticated = false;
 
   bool get isLoading => _isLoading;
@@ -43,31 +44,27 @@ class AuthProviders extends ChangeNotifier {
 
     if (response.isSuccess) {
       userID = response.body?["user_id"];
-      writeUid(userID!);
 
       Map<String, dynamic>? userInfo = await getUserInfo(userID!);
 
-      if (userInfo != null) {
-        _userName = userInfo['userName'];
+      if (userInfo?['userName'] != null) {
+        writeUid(userID!);
+        _userName = userInfo?['userName'];
         writeUserName(_userName!);
-
-        // Check if the user is an admin
-        bool isAdmin = userInfo['admin'] ?? false;
-
-        // Write admin status to SharedPreferences
+        bool isAdmin = userInfo?['admin'] ?? false;
         writeAdminStatus(isAdmin);
         await checkAndUpdateDeviceToken(userID!);
         // await getCurrentUser(userID!);
         notifyListeners();
         return true;
       } else {
+
         notifyListeners();
         return false;
       }
-    } else {
-      notifyListeners();
-      return false;
     }
+      return false;
+
   }
 
   Future<bool> signUp(String email, password, String name, String phone,
@@ -129,7 +126,7 @@ class AuthProviders extends ChangeNotifier {
     clearUserName();
     notifyListeners();
 
-    Navigation.offAll(context, const Login());
+    Navigation.offAll(context, const SplashScreen());
   }
 
   Future<void> checkAuthenticationStatus() async {
@@ -216,19 +213,15 @@ class AuthProviders extends ChangeNotifier {
 
     if (response.isSuccess) {
       userID = response.body?["user_id"] as String;
-      writeUid(userID!);
-      await _token();
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? deviceToken = prefs.getString('deviceToken');
       final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
       String formattedCreatedTime = formatter.format(DateTime.now());
       String formattedLastUpdateTime = formatter.format(DateTime.now());
 
-      UserModel user = UserModel(
+      SignUpModel user = SignUpModel(
           userId: userID,
           userEmail: email,
           userName: name,
-          userDeviceTokens: deviceToken,
+          userDeviceTokens: '',
           createdTime: formattedCreatedTime,
           lastUpdateTime: formattedLastUpdateTime,
           userPhone: phone,
@@ -267,19 +260,15 @@ class AuthProviders extends ChangeNotifier {
 
     if (response.isSuccess) {
       userID = response.body?["user_id"] as String;
-      writeUid(userID!);
-      await _token();
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? deviceToken = prefs.getString('deviceToken');
       final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
       String formattedCreatedTime = formatter.format(DateTime.now());
       String formattedLastUpdateTime = formatter.format(DateTime.now());
 
-      UserModel user = UserModel(
+      SignUpModel user = SignUpModel(
           userId: userID,
           userEmail: email,
           userName: name,
-          userDeviceTokens: deviceToken,
+          userDeviceTokens: '',
           createdTime: formattedCreatedTime,
           lastUpdateTime: formattedLastUpdateTime,
           userPhone: phone,

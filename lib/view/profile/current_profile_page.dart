@@ -131,28 +131,38 @@ class _CurrentProfilePageState extends State<CurrentProfilePage> {
                         // Adjust padding as needed
                         child: Column(
                           children: [
-                            Text('Blood Donated'),
+                            const Text('Blood Donated'),
                             Text(
                               counter,
                               style:
-                                  TextStyle(fontSize: 16, color: Colors.black),
+                                  const TextStyle(fontSize: 16, color: Colors.black),
                             ),
                           ],
                         ),
                       ),
                     ),
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: OutlinedButton(
-                        onPressed: () {
-                          _update(_profile);
-                        },
-                        child: Text('Update'),
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(
-                              color: primaryColor), // Set the outline color
-                        ),
-                      ),
+                    Consumer<ProfileUpdateProvider>(
+                      builder: (context, updateProvider, child) {
+                        return FutureBuilder(
+                          future: updateProvider.getuid(),
+                          builder: (context, snapshot) {
+                            return Align(
+                              alignment: Alignment.topRight,
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  _performUpdate(context, updateProvider);
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  side: const BorderSide(
+                                    color: primaryColor,
+                                  ),
+                                ),
+                                child: const Text('Update'),
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -172,7 +182,7 @@ class _CurrentProfilePageState extends State<CurrentProfilePage> {
                       bottom: 0,
                       right: -15,
                       child: IconButton(
-                        icon: Icon(Icons.camera_alt),
+                        icon: const Icon(Icons.camera_alt),
                         onPressed: () {
                           _pickImage();
                         },
@@ -224,13 +234,13 @@ class _CurrentProfilePageState extends State<CurrentProfilePage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         'Last Donate Date : ',
                         style: TextStyle(fontSize: 16, color: Colors.black),
                       ),
                       Text(
                         _dateET.text,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 16,
                             color:
                                 Colors.black), // Customize the style as needed
@@ -241,11 +251,11 @@ class _CurrentProfilePageState extends State<CurrentProfilePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Status'),
+                    const Text('Status'),
                     const SizedBox(width: 3),
                     DropdownButton<String>(
                       value: _profile.isAvailable ? 'Available' : 'Away',
-                      items: [
+                      items: const [
                         DropdownMenuItem(
                           value: 'Available',
                           child: Text('Available'),
@@ -372,7 +382,7 @@ class _CurrentProfilePageState extends State<CurrentProfilePage> {
     _selectedOption = user.isAvailable ?? true;
   }
 
-  Future<void> _update(ProfileUpdateProvider updateProvider) async {
+  void _performUpdate(BuildContext context, ProfileUpdateProvider updateProvider) async {
     final uid = _profile.uid;
     final date = _dateET.text;
     final reference = _referenceET.text;
@@ -381,24 +391,23 @@ class _CurrentProfilePageState extends State<CurrentProfilePage> {
     final dateofbirth = _dateofbirth.text;
 
     if (kDebugMode) {
-      print(date);
+
     }
 
-    bool success = await updateProvider.update(
-        uid: uid.toString(),
-        donateDate: date,
-        reference: reference,
-        condition: condition,
-        socialMediaLink: socialMediaLink,
-        birthday: dateofbirth);
+    bool success = await _profile.update(
+      uid: uid.toString(),
+      donateDate: date,
+      reference: reference,
+      condition: condition,
+      socialMediaLink: socialMediaLink,
+      birthday: dateofbirth,
+    );
 
     if (success) {
-      updateProvider.clearLastDonateDate();
+      _profile.clearLastDonateDate();
       Navigation.offAll(context, const Dashboard());
 
-      SnackbarUtils.showMessage(
-          context, 'Update Successfully');
-
+      SnackbarUtils.showMessage(context, 'Update Successfully');
     }
   }
 
@@ -502,7 +511,9 @@ class _CurrentProfilePageState extends State<CurrentProfilePage> {
       // Update the Firestore document with the download URL
       _updateUserProfilePhoto(downloadUrl);
     } catch (e) {
-      print('Error uploading image: $e');
+      if (kDebugMode) {
+        print('Error uploading image: $e');
+      }
     }
   }
 

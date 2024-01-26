@@ -58,6 +58,7 @@ class ProfileUpdateProvider extends ChangeNotifier {
     String? birthday,
     String? phone,
     String? counter,
+    String? name,
 
   }) async {
     _updatingInfo = true;
@@ -67,6 +68,9 @@ class ProfileUpdateProvider extends ChangeNotifier {
 
     if (donateDate != null) {
       updatedData['last_donate_date'] = donateDate;
+    }
+    if (name != null) {
+      updatedData['user_name'] = name;
     }
     if (counter != null) {
       updatedData['blood_count'] = counter;
@@ -160,15 +164,19 @@ class ProfileUpdateProvider extends ChangeNotifier {
     uid = prefs.getString('uid');
   }
 
-  Future<bool> deleteUser(String userId, String password) async {
+
+
+
+  Future<bool> deleteUser(String userId, String adminPassword) async {
     try {
       _updatingInfo = true;
       notifyListeners();
 
-      // Re-authenticate the user
-      await reauthenticateUser(password);
+      await reauthenticateUser(adminPassword);
 
-      // Proceed with deleting the user
+      // Delete user from Firebase Authentication
+
+      // Proceed with deleting the user from the database
       final response = await DatabaseService.delete(userCollection, userId);
 
       _updatingInfo = false;
@@ -176,7 +184,6 @@ class ProfileUpdateProvider extends ChangeNotifier {
 
       return response.isSuccess;
     } catch (error) {
-      print("Error deleting user: $error");
       return false;
     }
   }
@@ -189,11 +196,11 @@ class ProfileUpdateProvider extends ChangeNotifier {
       if (user != null) {
         // Get the user's email
         String? email = user.email;
-        print(email);
 
         if (email != null) {
           // Create a credential using the user's email and provided password
           AuthCredential credential = EmailAuthProvider.credential(email: email, password: password);
+
 
           // Re-authenticate the user with the credential
           await user.reauthenticateWithCredential(credential);
@@ -206,8 +213,6 @@ class ProfileUpdateProvider extends ChangeNotifier {
         }
       }
     } catch (error) {
-      print("Error during reauthentication: $error");
-      // Handle error as needed
       rethrow;
     }
   }
@@ -231,6 +236,8 @@ class ProfileUpdateProvider extends ChangeNotifier {
     _updateDate = DateTime.now();
     notifyListeners();
   }
+
+
 
 
 }

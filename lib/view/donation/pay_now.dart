@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:muslim_blood_donor_bd/constant/navigation.dart';
 
 import '../../constant/assets_path.dart';
 import '../../view_model/provider/edit_donate_provider.dart';
@@ -15,6 +16,11 @@ class PayNow extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Donate Us'),
+        leading: BackButton(
+          onPressed: (){
+            Navigation.back(context);
+          }
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),

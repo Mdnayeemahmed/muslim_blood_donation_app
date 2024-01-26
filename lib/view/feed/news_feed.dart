@@ -34,18 +34,19 @@ class _NewsfeedState extends State<Newsfeed> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('NewsFeed'),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigation.to(context, CreatePost());
-        },
-        label: const Text('Add'),
-        icon: const Icon(Icons.add),
-      ),
-      body: _buildNewsFeed(),
-    );
+        appBar: AppBar(
+          title: const Text('NewsFeed'),
+        ),
+        body: _buildNewsFeed(),
+        floatingActionButton: isAdmin
+            ? FloatingActionButton.extended(
+                onPressed: () {
+                  Navigation.to(context, CreatePost());
+                },
+                label: const Text('Add'),
+                icon: const Icon(Icons.add),
+              )
+            : null);
   }
 
   Widget _buildNewsFeed() {
@@ -94,7 +95,8 @@ class _NewsfeedState extends State<Newsfeed> {
               height: 500,
               width: double.infinity,
               fit: BoxFit.fitHeight,
-              placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+              placeholder: (context, url) =>
+                  const Center(child: CircularProgressIndicator()),
               errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
           Padding(
@@ -104,7 +106,8 @@ class _NewsfeedState extends State<Newsfeed> {
           if (isAdmin)
             ElevatedButton(
               onPressed: () async {
-                bool? confirmDelete = await showDeleteConfirmation(context, post.id, post['imageURL']);
+                bool? confirmDelete = await showDeleteConfirmation(
+                    context, post.id, post['imageURL']);
                 if (confirmDelete ?? false) {
                   _deletePost(post.id, post['imageURL']);
                 }
@@ -133,7 +136,9 @@ class _NewsfeedState extends State<Newsfeed> {
   Future<void> _deletePost(String postId, String? imageURL) async {
     await FirebaseFirestore.instance.collection('posts').doc(postId).delete();
     if (imageURL != null) {
-      await firebase_storage.FirebaseStorage.instance.refFromURL(imageURL).delete();
+      await firebase_storage.FirebaseStorage.instance
+          .refFromURL(imageURL)
+          .delete();
     }
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Post deleted successfully')),
@@ -147,7 +152,8 @@ class _NewsfeedState extends State<Newsfeed> {
     });
   }
 
-  Future<bool?> showDeleteConfirmation(BuildContext context, String postId, String? imageURL) async {
+  Future<bool?> showDeleteConfirmation(
+      BuildContext context, String postId, String? imageURL) async {
     return await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {

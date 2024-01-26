@@ -7093,6 +7093,7 @@
 		},
 		{
 			"division_id": "5",
+			"district_id": "22",
 			"district": "Chapinawabganj",
 			"name": "Bholahat",
 			"postOffice": "Bholahat",
@@ -7100,6 +7101,7 @@
 		},
 		{
 			"division_id": "5",
+			"district_id": "22",
 			"district": "Chapinawabganj",
 			"name": "Chapinawabganj Sadar",
 			"postOffice": "Amnura",
@@ -7107,6 +7109,7 @@
 		},
 		{
 			"division_id": "5",
+			"district_id": "22",
 			"district": "Chapinawabganj",
 			"name": "Chapinawabganj Sadar",
 			"postOffice": "Chapinawbganj Sadar",
@@ -7114,6 +7117,7 @@
 		},
 		{
 			"division_id": "5",
+			"district_id": "22",
 			"district": "Chapinawabganj",
 			"name": "Chapinawabganj Sadar",
 			"postOffice": "Rajarampur",
@@ -7121,6 +7125,7 @@
 		},
 		{
 			"division_id": "5",
+			"district_id": "22",
 			"district": "Chapinawabganj",
 			"name": "Chapinawabganj Sadar",
 			"postOffice": "Ramchandrapur",
@@ -7128,6 +7133,7 @@
 		},
 		{
 			"division_id": "5",
+			"district_id": "22",
 			"district": "Chapinawabganj",
 			"name": "Nachol",
 			"postOffice": "Mandumala",
@@ -7135,6 +7141,7 @@
 		},
 		{
 			"division_id": "5",
+			"district_id": "22",
 			"district": "Chapinawabganj",
 			"name": "Nachol",
 			"postOffice": "Nachol",
@@ -7142,6 +7149,7 @@
 		},
 		{
 			"division_id": "5",
+			"district_id": "22",
 			"district": "Chapinawabganj",
 			"name": "Rohanpur",
 			"postOffice": "Gomashtapur",
@@ -7149,6 +7157,7 @@
 		},
 		{
 			"division_id": "5",
+			"district_id": "22",
 			"district": "Chapinawabganj",
 			"name": "Rohanpur",
 			"postOffice": "Rohanpur",
@@ -7156,6 +7165,7 @@
 		},
 		{
 			"division_id": "5",
+			"district_id": "22",
 			"district": "Chapinawabganj",
 			"name": "Shibganj U.P.O",
 			"postOffice": "Kansart",
@@ -7163,6 +7173,7 @@
 		},
 		{
 			"division_id": "5",
+			"district_id": "22",
 			"district": "Chapinawabganj",
 			"name": "Shibganj U.P.O",
 			"postOffice": "Manaksha",
@@ -7170,6 +7181,7 @@
 		},
 		{
 			"division_id": "5",
+			"district_id": "22",
 			"district": "Chapinawabganj",
 			"name": "Shibganj U.P.O",
 			"postOffice": "Shibganj U.P.O",
@@ -7443,126 +7455,138 @@
 		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "23",
 			"name": "Banwarinagar",
 			"postOffice": "Banwarinagar",
 			"postCode": "6650"
 		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "23",
 			"name": "Bera",
 			"postOffice": "Bera",
 			"postCode": "6680"
 		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "23",
 			"name": "Bera",
 			"postOffice": "Kashinathpur",
 			"postCode": "6682"
 		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "23",
 			"name": "Bera",
 			"postOffice": "Nakalia",
 			"postCode": "6681"
 		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "23",
 			"name": "Bera",
 			"postOffice": "Puran Bharenga",
 			"postCode": "6683"
 		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "23",
 			"name": "Bhangura",
 			"postOffice": "Bhangura",
 			"postCode": "6640"
 		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "23",
 			"name": "Chatmohar",
 			"postOffice": "Chatmohar",
 			"postCode": "6630"
 		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "23",
 			"name": "Debottar",
 			"postOffice": "Debottar",
 			"postCode": "6610"
 		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "23",
 			"name": "Ishwardi",
 			"postOffice": "Dhapari",
 			"postCode": "6621"
 		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "23",
 			"name": "Ishwardi",
 			"postOffice": "Ishwardi",
 			"postCode": "6620"
 		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "23",
 			"name": "Ishwardi",
 			"postOffice": "Pakshi",
 			"postCode": "6622"
 		},
+{
+			"division_id": "5",
+			"district_id": "23",
+			"postOffice": "Dasharia",
+			"postCode": "6622"
+		},
+{
+			"division_id": "5",
+			"district_id": "23",
+			"postOffice": "Ruppur",
+			"postCode": "6622"
+		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "2",
 			"name": "Ishwardi",
 			"postOffice": "Rajapur",
 			"postCode": "6623"
 		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "23",
 			"name": "Pabna Sadar",
 			"postOffice": "Hamayetpur",
 			"postCode": "6602"
 		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "23",
 			"name": "Pabna Sadar",
 			"postOffice": "Kaliko Cotton Mills",
 			"postCode": "6601"
 		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "23",
 			"name": "Pabna Sadar",
 			"postOffice": "Pabna Sadar",
 			"postCode": "6600"
 		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "23",
 			"name": "Sathia",
 			"postOffice": "Sathia",
 			"postCode": "6670"
 		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "23",
 			"name": "Sujanagar",
 			"postOffice": "Sagarkandi",
 			"postCode": "6661"
 		},
 		{
 			"division_id": "5",
-			"district_id": "22",
+			"district_id": "23",
 			"name": "Sujanagar",
 			"postOffice": "Sujanagar",
 			"postCode": "6660"
@@ -7894,6 +7918,13 @@
 			"district_id": "26",
 			"name": "Bangla Hili",
 			"postOffice": "Bangla Hili",
+			"postCode": "5270"
+		},
+{
+			"division_id": "6",
+			"district_id": "26",
+			"name": "Kaharul",
+			"postOffice": "Kaharul",
 			"postCode": "5270"
 		},
 		{

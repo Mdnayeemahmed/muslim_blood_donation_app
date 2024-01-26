@@ -25,10 +25,11 @@ class CommonButton extends StatelessWidget {
             height: 60.0,
             width: 60.0,
             decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-                color: primaryColor),
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+              color: primaryColor,
+            ),
             child: Icon(
               iconData,
               color: Colors.white,
@@ -38,13 +39,13 @@ class CommonButton extends StatelessWidget {
         const SizedBox(
           height: 2,
         ),
-        Align(
-          alignment: Alignment.center,
+        Center(
           child: Text(
             title,
-            style: TextStyles.style16Bold(dark)
+            style: TextStyles.style14Bold(dark),
+            textAlign: TextAlign.center, // Ensure the text is centered
           ),
-        )
+        ),
       ],
     );
   }

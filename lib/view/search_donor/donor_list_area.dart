@@ -57,7 +57,7 @@ class DonorListArea extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigation.offAll(context, Dashboard());
+          Navigation.off(context, Dashboard());
         },
         label: const Text('Home'),
         icon: const Icon(Icons.home),

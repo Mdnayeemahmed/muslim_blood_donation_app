@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:muslim_blood_donor_bd/view/feed/news_feed.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../constant/navigation.dart';
 import '../../view_model/provider/post_provider.dart';
 
 class CreatePost extends StatefulWidget {
@@ -123,11 +125,23 @@ class _CreatePostWidgetState extends State<_CreatePostWidget> {
           .setImage(File(pickedFile.path));
     }
   }
-
   Future<void> _uploadPost(BuildContext context) async {
     PostProvider postProvider = Provider.of<PostProvider>(context, listen: false);
 
-    // Pass username and uid to uploadPost
+    String postContent = postProvider.postContentController.text.trim();
+    File? imageFile = postProvider.imageFile;
+
+    if (postContent.isEmpty || imageFile == null) {
+      // Show an error message if the post content or image is empty
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please provide both post content and an image.'),
+        ),
+      );
+      return;
+    }
+
+    // Pass username, uid, post content, and image to uploadPost
     await postProvider.uploadPost(
       widget.uid,
       widget.userName,
@@ -135,6 +149,8 @@ class _CreatePostWidgetState extends State<_CreatePostWidget> {
 
     // Navigate to the Newsfeed screen after a successful post upload
     Navigator.of(context).pop(); // Close the current screen
-    Navigator.of(context).pushReplacementNamed('/newsfeed'); // Replace the current screen with the Newsfeed screen
+    Navigation.offAll(context, Newsfeed()); // Replace the current screen with the Newsfeed screen
   }
+
+
 }

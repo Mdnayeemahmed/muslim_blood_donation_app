@@ -82,13 +82,9 @@ class _DonorSignUpState extends State<AddDonor> {
     _phoneController.dispose();
     _dateofbirth.dispose();
     _socialMediaLinkET.dispose();
-    _profile.dispose();
     _referenceET.dispose();
     _conditionET.dispose();
-    _authProvider.dispose();
-    _dataProvider.dispose();
     Provider.of<SelectionModel>(context, listen: false).dispose();
-    super.dispose();
   }
 
   @override
@@ -132,7 +128,7 @@ class _DonorSignUpState extends State<AddDonor> {
     final conditon=_conditionET.text;
 
     if (_signupKey.currentState?.validate() ?? false) {
-      bool success = await _authProvider.adminSignUp(
+      bool success = await _authProvider.userSignUpByAdmin(
           email, password, name, phone, divison!, district!, area!, blood,dateofbirth,
           reference,
           sociallink,
@@ -149,7 +145,7 @@ class _DonorSignUpState extends State<AddDonor> {
 
   void _handleSignupResult(bool success) {
     if (success) {
-      Navigation.offAll(context, const Dashboard());
+      Navigation.off(context, const Dashboard());
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

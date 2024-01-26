@@ -37,6 +37,7 @@ class _ReqListState extends State<ReqList> {
       appBar: AppBar(
         title: const Text('Request For Blood'),
       ),
+
       body: FutureBuilder<bool>(
         future: isAdminFuture,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -134,6 +135,7 @@ class _ReqListState extends State<ReqList> {
           );
         },
       ),
+
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: primaryColor,
         onPressed: () {

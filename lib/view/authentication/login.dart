@@ -36,12 +36,6 @@ class _LoginState extends State<Login> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,12 +95,16 @@ class _LoginState extends State<Login> {
                             ),
                             Consumer<AuthProviders>(
                               builder: (context, authProvider, child) {
-                                return authProvider.isLoading
-                                    ? const CircularProgressIndicator() // Show the loading indicator if isLoading is true
-                                    : ElevatedButton(
-                                        onPressed: _login,
-                                        child: const Text("Login"),
-                                      );
+                                return ElevatedButton(
+                                  onPressed: () {
+                                    if (!authProvider.isLoading) {
+                                      _login();
+                                    }
+                                  },
+                                  child: authProvider.isLoading
+                                      ? const CircularProgressIndicator()
+                                      : const Text("Login"),
+                                );
                               },
                             ),
                           ],
@@ -183,20 +181,20 @@ class _LoginState extends State<Login> {
 
     if (_loginKey.currentState?.validate() ?? false) {
       bool success = await _authProvider.login(email, password);
-      print('object');
 
       if (success) {
-        print('true');
         Navigation.offAll(context, const Dashboard());
       } else {
-        print('xyz');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("Login failed. Please check your credentials."),
           ),
         );
+
+        // Optionally, you can check if user information is not available
       }
     }
+
     FocusScope.of(context).unfocus();
   }
 }

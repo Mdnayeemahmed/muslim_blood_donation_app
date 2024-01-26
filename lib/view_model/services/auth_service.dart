@@ -54,6 +54,7 @@ class AuthService {
 
   static Future<ResponseModel> createAuth(String email, String password) async {
     try {
+      // Create user account
       final credential = await _authInstance.createUserWithEmailAndPassword(
         email: email,
         password: password,
@@ -61,6 +62,9 @@ class AuthService {
 
       final uID = credential.user?.uid ?? "";
 
+      // Sign out the user to prevent automatic login
+
+      // Return response without logging in the user
       return ResponseModel(
         isSuccess: true,
         statusCode: 200,
